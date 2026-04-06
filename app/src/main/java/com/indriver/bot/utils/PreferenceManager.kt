@@ -3,13 +3,12 @@ package com.indriver.bot.utils
 import android.content.Context
 import android.content.SharedPreferences
 
-class PreferenceManager(private val context: Context) {
+class PreferenceManager(context: Context) {
 
-    private val sharedPreferences: SharedPreferences by lazy {
+    private val sharedPreferences: SharedPreferences = 
         context.getSharedPreferences("indriver_bot_prefs", Context.MODE_PRIVATE)
-    }
 
-    // Bot Settings - using getter/setter methods for Java compatibility
+    // Bot Settings
     fun isAutoBidEnabled(): Boolean = sharedPreferences.getBoolean("auto_bid_enabled", true)
     fun setAutoBidEnabled(enabled: Boolean) = sharedPreferences.edit().putBoolean("auto_bid_enabled", enabled).apply()
 
@@ -29,25 +28,18 @@ class PreferenceManager(private val context: Context) {
     fun getMissedCount(): Int = sharedPreferences.getInt("missed_count", 0)
     fun incrementMissed() = sharedPreferences.edit().putInt("missed_count", getMissedCount() + 1).apply()
 
-    fun getTotalEarnings(): Double = sharedPreferences.getString("total_earnings", "0.0")?.toDoubleOrNull() ?: 0.0
-    fun addEarnings(amount: Double) {
-        sharedPreferences.edit().putString("total_earnings", (getTotalEarnings() + amount).toString()).apply()
-    }
-
-    // Today's stats
     fun getTodayAccepted(): Int = sharedPreferences.getInt("today_accepted", 0)
     fun incrementTodayAccepted() = sharedPreferences.edit().putInt("today_accepted", getTodayAccepted() + 1).apply()
 
     fun getTodayEarnings(): Double = sharedPreferences.getString("today_earnings", "0.0")?.toDoubleOrNull() ?: 0.0
-    fun addTodayEarnings(amount: Double) {
-        sharedPreferences.edit().putString("today_earnings", (getTodayEarnings() + amount).toString()).apply()
-    }
+    fun addTodayEarnings(amount: Double) = sharedPreferences.edit().putString("today_earnings", (getTodayEarnings() + amount).toString()).apply()
 
-    // Best day
+    fun getTotalEarnings(): Double = sharedPreferences.getString("total_earnings", "0.0")?.toDoubleOrNull() ?: 0.0
+    fun addEarnings(amount: Double) = sharedPreferences.edit().putString("total_earnings", (getTotalEarnings() + amount).toString()).apply()
+
     fun getBestDay(): String = sharedPreferences.getString("best_day", "N/A") ?: "N/A"
     fun setBestDay(day: String) = sharedPreferences.edit().putString("best_day", day).apply()
 
-    // Win rate
     fun getWinRate(): Double {
         val accepted = getAcceptedCount()
         val missed = getMissedCount()
@@ -55,7 +47,6 @@ class PreferenceManager(private val context: Context) {
         return if (total > 0) (accepted.toDouble() / total) * 100 else 0.0
     }
 
-    // Reset
     fun resetStats() {
         sharedPreferences.edit().apply {
             putInt("accepted_count", 0)
