@@ -1,4 +1,4 @@
-package com.indriver.bot
+package com.indriver.bot.service
 
 import android.app.Notification
 import android.app.NotificationChannel
