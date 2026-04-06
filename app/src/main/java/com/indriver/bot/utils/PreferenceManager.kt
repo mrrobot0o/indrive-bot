@@ -2,43 +2,25 @@ package com.indriver.bot.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 
 class PreferenceManager(private val context: Context) {
 
-    private val masterKey: MasterKey by lazy {
-        MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-    }
-
     private val sharedPreferences: SharedPreferences by lazy {
-        EncryptedSharedPreferences.create(
-            context,
-            "indriver_bot_prefs",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        context.getSharedPreferences("indriver_bot_prefs", Context.MODE_PRIVATE)
     }
 
-    // Bot Settings
-    var autoBidEnabled: Boolean
-        get() = sharedPreferences.getBoolean("auto_bid_enabled", true)
-        set(value) = sharedPreferences.edit().putBoolean("auto_bid_enabled", value).apply()
+    // Bot Settings - using getter/setter methods for Java compatibility
+    fun isAutoBidEnabled(): Boolean = sharedPreferences.getBoolean("auto_bid_enabled", true)
+    fun setAutoBidEnabled(enabled: Boolean) = sharedPreferences.edit().putBoolean("auto_bid_enabled", enabled).apply()
 
-    var notificationsEnabled: Boolean
-        get() = sharedPreferences.getBoolean("notifications_enabled", true)
-        set(value) = sharedPreferences.edit().putBoolean("notifications_enabled", value).apply()
+    fun areNotificationsEnabled(): Boolean = sharedPreferences.getBoolean("notifications_enabled", true)
+    fun setNotificationsEnabled(enabled: Boolean) = sharedPreferences.edit().putBoolean("notifications_enabled", enabled).apply()
 
-    var minPrice: Double
-        get() = sharedPreferences.getString("min_price", "0.0")?.toDoubleOrNull() ?: 0.0
-        set(value) = sharedPreferences.edit().putString("min_price", value.toString()).apply()
+    fun getMinPrice(): Double = sharedPreferences.getString("min_price", "0.0")?.toDoubleOrNull() ?: 0.0
+    fun setMinPrice(price: Double) = sharedPreferences.edit().putString("min_price", price.toString()).apply()
 
-    var maxDistance: Double
-        get() = sharedPreferences.getString("max_distance", "10.0")?.toDoubleOrNull() ?: 10.0
-        set(value) = sharedPreferences.edit().putString("max_distance", value.toString()).apply()
+    fun getMaxDistance(): Double = sharedPreferences.getString("max_distance", "10.0")?.toDoubleOrNull() ?: 10.0
+    fun setMaxDistance(distance: Double) = sharedPreferences.edit().putString("max_distance", distance.toString()).apply()
 
     // Stats
     fun getAcceptedCount(): Int = sharedPreferences.getInt("accepted_count", 0)
